@@ -49,4 +49,4 @@ for s in servers:
 # Sort & Display studies based on date
 studies.sort(key=lambda x:x['rw'])
 for val in studies:
-   print (val['server']+" | "+str(val['rw'])+" | "+val['name']+" | "+val['acc']+" | "+val['mrn']+" | "+val['file'])
+   print (val['server']+" | "+str(val['rw'])+" | "+val['acc']+" | "+val['mrn']+" | "+val['file']+" | "+val['name'])
