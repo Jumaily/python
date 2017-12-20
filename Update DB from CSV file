@@ -27,7 +27,8 @@ logfile.write("Changing Rcodes CPTS \n\n")
 with open(inputfile,'r') as csvDataFile:
    reader = csv.DictReader(csvDataFile)
    for csvrow in reader:
-   	  # Select old cpt code and log it for backup purposes
+   	
+      # Select old cpt code and log it for backup purposes
       cursor.execute("SELECT TOP 1 cpt_code1 FROM item WHERE dtl_svc_cd='"+csvrow['rcode']+"'")
       db_oldcpt = (cursor.fetchone()).cpt_code1
       logfile.write(csvrow['rcode']+": "+db_oldcpt+" -> "+csvrow['newcpt']+"\n")
