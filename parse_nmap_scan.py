@@ -12,7 +12,7 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-col_headers = ["IP", 'host_name', 'OS_name', 'protocol', 'port', 'service', 'product']
+col_headers = ['IP', 'host_name', 'OS_name', 'protocol', 'port', 'service', 'product']
 
 #curl data to Splunk
 def curl_bro(pumps):
