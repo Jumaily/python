@@ -1,23 +1,22 @@
-#
-# Modified code of: https://github.com/laconicwolf/Nmap-Scan-to-CSV/blob/master/nmap_xml_parser.py
-# to parse and send data to Splunk
-# 
-
 import xml.etree.ElementTree as ET
+import sys
 import requests
 import argparse
 import pandas as pd
 from datetime import datetime
 import urllib3
+import socket
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-col_headers = ['IP', 'host_name', 'OS_name', 'protocol', 'port', 'service', 'product']
+col_headers = ["IP", 'host_name', 'OS_name', 'protocol', 'port', 'service', 'product']
+this_hostname = (socket.gethostbyaddr(socket.gethostname())[0])
+this_IP = (socket.gethostbyaddr(socket.gethostname())[2])
 
-#curl data to Splunk
+#curl them datas bro and not be on dat couch
 def curl_bro(pumps):
-    
-    data = '{"sourcetype": "external_scans","event":"'
+    global this_hostname
+    data = '{"sourcetype": "external_scans","host":"'+this_hostname+'","event":"'
     x = 0
     for i in col_headers:
         try: data += col_headers[x]+'='+pumps[x]
@@ -26,14 +25,9 @@ def curl_bro(pumps):
         x += 1
     data += '"}'
 
-    # Splunk Event colector & source type. Change to your URL
-    url = 'https://http-inputs-SPLUNKCOMPANY.splunkcloud.com:443/services/collector'
+    url = 'https://http-inputs-x.splunkcloud.com:443/services/collector'
     sourcetype = 'external_scans'
-
-    # Splunk Auth Code, replace!
-    headers = {'Authorization': 'Splunk 1010101001-01010-01010-10101-101010101010'}
-
-    # Send Data using curl
+    headers = {'Authorization': 'Splunk xxxxxx-xxxx-xxx-xx-x'}
     response = requests.post(url=url, headers=headers, data=data, verify=False)
 
 def whompwhomp(woot):
@@ -107,6 +101,6 @@ def main():
     datadatadata = whompwhomp(root)
 
     df = pd.DataFrame(datadatadata)
-    df.to_csv('./scan_'+curr_date+".csv", index=False, header=col_headers)
+    df.to_csv('/jobs/scan_'+curr_date+".csv", index=False, header=col_headers)
 
 main()
