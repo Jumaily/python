@@ -5,15 +5,18 @@ import pandas as pd
 from datetime import datetime
 import urllib3
 import socket
+import os
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def def_JustIps(result = []):
-    curr_date = datetime.now().strftime("%m-%d-%Y")
+# function will just parse out xml format into a single line/txt file of 
+# online IPs only
+def def_JustIps(curr_date, fn_phase1, result = []):
     parser = argparse.ArgumentParser()
     parser.add_argument('file', type=str)
-    args = parser.parse_args()
-    root = (ET.parse("./"+args.file)).getroot()
+
+    # Open file for reading
+    root = (ET.parse("./"+fn_phase1)).getroot()
 
     # split it by each host
     for host in root.findall('host'):
@@ -28,13 +31,25 @@ def def_JustIps(result = []):
         result.append(temp)
 
     df = pd.DataFrame(result)
-    fn = './IPs_only_'+curr_date+".csv"
+    fn = fn_phase1+".txt"
     df.to_csv(fn, index=False, header=False)
-
-    return 0
+    return fn
 
 
 def main():
-    def_JustIps()
+    IPs = '128.163.188.10-15'
+    curr_date = datetime.now().strftime("%m-%d-%Y")
+    fn_phase1 = "phase1-online_IPs_only_"+curr_date
+    fn_phase2 = "phase2-probe_"+curr_date
+
+    # just a ping/discovery scan, to see whats online. Then output it to a txt file.
+    os.system('nmap -sn -n -T4 -oX '+fn_phase1+' '+IPs)
+    fn_IP_list = def_JustIps(curr_date,fn_phase1)
+
+    # next probe all IPs from list we got, scan all ports (1 – 65535) + service/host info
+    os.system('nmap -sS -p- -sV -O -T4 -iL '+fn_IP_list+' -oX '+fn_phase2+' '+IPs)
+
+    
+    return 0
 
 main()
